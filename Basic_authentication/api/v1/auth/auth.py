@@ -13,9 +13,10 @@ class Auth:
         """Method that returns True
         if the path is not in the list of excluded paths."""
         if (path is None or
-            path not in excluded_paths or
             excluded_paths is None or
-            excluded_paths == []):
+            excluded_paths == [] or
+            path not in excluded_paths
+            ):
             return True
         return False
 
