@@ -6,7 +6,6 @@ from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
-from api.v1.auth.auth import Auth
 import os
 
 
@@ -48,8 +47,8 @@ def before_request():
     if auth is None:
         return
     exluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
-    if request.path not in exluded_paths:
-        return auth.require_auth(request.path, exluded_paths)
+    if not auth.require_auth(request.path, exluded_paths):
+        return
     if auth.authorization_header(request) is None:
         abort(401)
     if auth.current_user(request) is None:
