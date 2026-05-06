@@ -6,6 +6,7 @@ from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
+from auth import require_auth
 import os
 
 
@@ -33,6 +34,24 @@ def forbidden(error) -> str:
     """Forbidden handler
     """
     return jsonify({"error": "Forbidden"}), 403
+
+auth = None
+if getenv("AUTH_TYPE") == "auth":
+    from api.v1.auth.auth import Auth
+    auth = Auth()
+
+def before_request():
+    """Before request handler
+    """
+    if auth is None:
+        return
+    exluded_paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    if request.path not in exluded_paths:
+        return auth.require_auth(request.path, exluded_paths)
+    if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.current_user(request) is None:
+        abort(403)
 
 
 if __name__ == "__main__":
