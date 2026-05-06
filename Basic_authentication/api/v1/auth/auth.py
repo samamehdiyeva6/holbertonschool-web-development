@@ -14,9 +14,10 @@ class Auth:
         if the path is not in the list of excluded paths."""
         if (path is None or
             excluded_paths is None or
-            excluded_paths == [] or
-            path not in excluded_paths
+            excluded_paths == []
             ):
+            return True
+        if path[-1] != '/':
             return True
         return False
 
