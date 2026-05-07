@@ -41,6 +41,7 @@ if getenv("AUTH_TYPE") == "auth":
     auth = Auth()
 
 
+@app.before_request
 def before_request():
     """Before request handler
     """
